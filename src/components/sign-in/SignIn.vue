@@ -26,7 +26,12 @@
               required
             />
 
-            <p v-if="loginError" class="error">{{ loginError }}</p>
+            <p
+              v-if="loginError"
+              class="error"
+            >
+              {{ loginError }}
+            </p>
 
             <div class="remember-me">
               <input
@@ -37,12 +42,20 @@
               <label for="rememberMe">Remember Me</label>
             </div>
 
-            <button type="submit">Sign In</button>
+            <button type="submit">
+              Sign In
+            </button>
           </form>
-          <button class="kakao-login" @click="handleKakaoLogin">
-            Login with Kakao
-          </button>
-          <p class="switch" @click="switchToSignup">
+          <div class="kakao-login-container">
+            <button class="kakao-login" @click="handleKakaoLogin">
+              <img src="https://developers.kakao.com/assets/img/about/logos/kakaologo_symbol_orange.png" alt="Kakao Logo" class="kakao-logo" />
+              Login with Kakao
+            </button>
+          </div>
+          <p
+            class="switch"
+            @click="switchToSignup"
+          >
             Don't have an account? <b>Sign up</b>
           </p>
         </div>
@@ -80,7 +93,12 @@
               required
             />
 
-            <p v-if="signupError" class="error">{{ signupError }}</p>
+            <p
+              v-if="signupError"
+              class="error"
+            >
+              {{ signupError }}
+            </p>
 
             <div class="terms">
               <input
@@ -91,9 +109,17 @@
               <label for="terms">I have read the <b>Terms and Conditions</b></label>
             </div>
 
-            <button type="submit" :disabled="!termsAccepted">Register</button>
+            <button
+              type="submit"
+              :disabled="!termsAccepted"
+            >
+              Register
+            </button>
           </form>
-          <p class="switch" @click="switchToLogin">
+          <p
+            class="switch"
+            @click="switchToLogin"
+          >
             Already have an account? <b>Sign in</b>
           </p>
         </div>
@@ -106,7 +132,7 @@
 export default {
   data() {
     return {
-      activeCard: "login", // 현재 활성 카드 (login or signup)
+      activeCard: "login",
       email: "",
       password: "",
       rememberMe: false,
@@ -139,7 +165,7 @@ export default {
           setTimeout(() => {
             card.classList.remove("enter");
             card.classList.add("active");
-          }, 1000); // 애니메이션 시간을 1초로 설정
+          }, 1000);
         }
       });
     },
@@ -167,35 +193,45 @@ export default {
       this.switchToLogin();
     },
     handleKakaoLogin() {
-      Kakao.Auth.login({
-        success: (authObj) => {
-          alert("Kakao Login Successful!");
-          console.log(authObj);
-        },
-        fail: (err) => {
-          alert("Kakao Login Failed!");
-          console.error(err);
-        },
-      });
+      alert("Kakao Login functionality will be added here.");
     },
   },
 };
 </script>
 
 <style scoped>
+.kakao-login-container {
+  margin-top: 20px;
+}
+
 .kakao-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   width: 100%;
-  padding: 10px;
+  padding: 12px 16px;
   background-color: #fee500;
   color: #000;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: bold;
-  margin-top: 10px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 .kakao-login:hover {
-  background-color: #ffd400;
+  background-color: #ffd900;
+}
+
+.kakao-login:active {
+  background-color: #e5c800;
+}
+
+.kakao-logo {
+  width: 24px;
+  height: 24px;
 }
 </style>
