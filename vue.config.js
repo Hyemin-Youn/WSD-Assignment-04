@@ -11,6 +11,7 @@ module.exports = {
 const path = require('path');
 
 module.exports = {
+  lintOnSave: false, // 저장 시 ESLint 비활성화
   configureWebpack: {
     resolve: {
       alias: {
