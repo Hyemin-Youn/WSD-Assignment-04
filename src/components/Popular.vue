@@ -56,7 +56,7 @@ export default {
       document.body.style.overflow = "hidden";
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.body.style.overflow = "";
   },
   methods: {

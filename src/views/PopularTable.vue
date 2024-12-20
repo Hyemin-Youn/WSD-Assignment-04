@@ -58,7 +58,7 @@ export default {
     this.fetchMovies();
     window.addEventListener("resize", this.handleResize);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     // 컴포넌트 파괴 시 이벤트 리스너 제거
     window.removeEventListener("resize", this.handleResize);
   },
