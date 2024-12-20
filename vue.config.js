@@ -5,7 +5,8 @@ module.exports = defineConfig({
 
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? './' : './'
-  //publicPath: process.env.NODE_ENV === 'production' ? '/이곳에 경로를 적으시오./' : '/'
+    ? '/WSD-Assignment-04/' // GitHub Pages의 레포지토리 이름
+    : '/'
 };
 
 const path = require('path');
