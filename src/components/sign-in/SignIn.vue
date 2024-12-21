@@ -11,45 +11,27 @@
           <h2>Login</h2>
           <form @submit.prevent="handleLogin">
             <label for="email">Email</label>
-            <input
-id="email"
-v-model="email"
-type="email"
-required
->
+            <input id="email" v-model="email" type="email" required />
 
             <label for="password">Password</label>
-            <input
-id="password"
-v-model="password"
-type="password"
-required
->
+            <input id="password" v-model="password" type="password" required />
 
-            <p
-v-if="loginError"
-class="error"
->
-{{ loginError }}
-</p>
+            <p v-if="loginError" class="error">{{ loginError }}</p>
 
             <div class="remember-me">
-              <input
-id="rememberMe"
-v-model="rememberMe"
-type="checkbox"
->
+              <input id="rememberMe" v-model="rememberMe" type="checkbox" />
               <label for="rememberMe">Remember Me</label>
             </div>
 
-            <button type="submit">
-Sign In
-</button>
+            <button type="submit">Sign In</button>
           </form>
-          <p
-class="switch"
-@click="switchToSignup"
->
+
+          <!-- 카카오 로그인 버튼 -->
+          <button class="kakao-login" @click="handleKakaoLogin">
+            카카오 로그인
+          </button>
+
+          <p class="switch" @click="switchToSignup">
             Don't have an account? <b>Sign up</b>
           </p>
         </div>
@@ -64,20 +46,15 @@ class="switch"
           <h2>Sign Up</h2>
           <form @submit.prevent="handleRegister">
             <label for="newEmail">Email</label>
-            <input
-id="newEmail"
-v-model="newEmail"
-type="email"
-required
->
+            <input id="newEmail" v-model="newEmail" type="email" required />
 
             <label for="newPassword">Password</label>
             <input
-id="newPassword"
-v-model="newPassword"
-type="password"
-required
->
+              id="newPassword"
+              v-model="newPassword"
+              type="password"
+              required
+            />
 
             <label for="confirmPassword">Confirm Password</label>
             <input
@@ -85,35 +62,22 @@ required
               v-model="confirmPassword"
               type="password"
               required
-            >
+            />
 
-            <p
-v-if="signupError"
-class="error"
->
-{{ signupError }}
-</p>
+            <p v-if="signupError" class="error">{{ signupError }}</p>
 
             <div class="terms">
-              <input
-id="terms"
-v-model="termsAccepted"
-type="checkbox"
->
-              <label for="terms">I have read the <b>Terms and Conditions</b></label>
+              <input id="terms" v-model="termsAccepted" type="checkbox" />
+              <label for="terms">
+                I have read the <b>Terms and Conditions</b>
+              </label>
             </div>
 
-            <button
-type="submit"
-:disabled="!termsAccepted"
->
-Register
-</button>
+            <button type="submit" :disabled="!termsAccepted">
+              Register
+            </button>
           </form>
-          <p
-class="switch"
-@click="switchToLogin"
->
+          <p class="switch" @click="switchToLogin">
             Already have an account? <b>Sign in</b>
           </p>
         </div>
@@ -126,7 +90,7 @@ class="switch"
 export default {
   data() {
     return {
-      activeCard: "login", // 현재 활성 카드 (login or signup)
+      activeCard: "login",
       email: "",
       password: "",
       rememberMe: false,
@@ -159,7 +123,7 @@ export default {
           setTimeout(() => {
             card.classList.remove("enter");
             card.classList.add("active");
-          }, 1000); // 애니메이션 시간을 1초로 설정
+          }, 1000);
         }
       });
     },
@@ -186,11 +150,18 @@ export default {
       alert("Registration successful!");
       this.switchToLogin();
     },
+    handleKakaoLogin() {
+      const clientId = "YOUR_KAKAO_CLIENT_ID";
+      const redirectUri = "YOUR_REDIRECT_URI";
+      const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
+      window.location.href = kakaoAuthUrl;
+    },
   },
 };
 </script>
 
 <style scoped>
+/* 기존 스타일 유지 */
 /* 배경 이미지 */
 .bg-image {
   position: fixed;
@@ -419,4 +390,21 @@ button {
     line-height: 1.2; /* 줄 간격 축소 */
 }
 
+/* 카카오 로그인 버튼 스타일 */
+.kakao-login {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #fee500;
+  color: #3d1d1d;
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.kakao-login:hover {
+  background-color: #ffd600;
+}
 </style>
