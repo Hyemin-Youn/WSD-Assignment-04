@@ -151,7 +151,7 @@ export default {
       this.switchToLogin();
     },
     handleKakaoLogin() {
-      const clientId = "YOUR_KAKAO_CLIENT_ID";
+      const clientId = process.env.VUE_APP_KAKAO_API_KEY;
       const redirectUri = "YOUR_REDIRECT_URI";
       const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
       window.location.href = kakaoAuthUrl;
