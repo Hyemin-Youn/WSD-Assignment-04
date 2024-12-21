@@ -22,6 +22,7 @@ const store = createStore({
       state.user = null;
       state.isAuthenticated = false;
       localStorage.removeItem("user");
+      localStorage.removeItem("kakaoToken"); // 카카오 토큰도 제거
     },
     TOGGLE_WISHLIST(state, movie) {
       const existingMovieIndex = state.wishlist.findIndex(
@@ -76,6 +77,12 @@ const store = createStore({
       console.log("검색 결과 저장 중:", results);
       commit("SET_SEARCH_RESULTS", results);
     },
+    login({ commit }, user) {
+      commit("setUser", user);
+    },
+    logout({ commit }) {
+      commit("logout");
+    },
   },
   getters: {
     wishlist: (state) => state.wishlist, // 찜 목록 가져오기
@@ -84,6 +91,8 @@ const store = createStore({
     },
     recentSearches: (state) => state.recentSearches, // 최근 검색어 가져오기
     searchResults: (state) => state.searchResults, // 저장된 검색 결과 가져오기
+    isAuthenticated: (state) => state.isAuthenticated, // 인증 여부 확인
+    user: (state) => state.user, // 사용자 정보 가져오기
   },
 });
 
