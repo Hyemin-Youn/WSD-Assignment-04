@@ -9,20 +9,23 @@ const store = createStore({
     searchResults: JSON.parse(localStorage.getItem("searchResults")) || [], // 검색 결과 저장
   },
   mutations: {
-    setUser(state, user) {
+    setUser(state, { user, token }) {
       state.user = user;
       state.isAuthenticated = !!user;
+
       if (user) {
         localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("kakaoToken", token); // 토큰 저장
       } else {
         localStorage.removeItem("user");
+        localStorage.removeItem("kakaoToken"); // 토큰 제거
       }
     },
     logout(state) {
       state.user = null;
       state.isAuthenticated = false;
       localStorage.removeItem("user");
-      localStorage.removeItem("kakaoToken"); // 카카오 토큰도 제거
+      localStorage.removeItem("kakaoToken");
     },
     TOGGLE_WISHLIST(state, movie) {
       const existingMovieIndex = state.wishlist.findIndex(
@@ -64,6 +67,12 @@ const store = createStore({
     },
   },
   actions: {
+    login({ commit }, { user, token }) {
+      commit("setUser", { user, token });
+    },
+    logout({ commit }) {
+      commit("logout");
+    },
     toggleWishlist({ commit }, movie) {
       commit("TOGGLE_WISHLIST", movie);
     },
@@ -76,12 +85,6 @@ const store = createStore({
     setSearchResults({ commit }, results) {
       console.log("검색 결과 저장 중:", results);
       commit("SET_SEARCH_RESULTS", results);
-    },
-    login({ commit }, user) {
-      commit("setUser", user);
-    },
-    logout({ commit }) {
-      commit("logout");
     },
   },
   getters: {
