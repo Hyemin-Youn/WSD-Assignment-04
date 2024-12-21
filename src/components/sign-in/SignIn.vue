@@ -88,77 +88,68 @@
 
 <script>
 export default {
-  data() {
-    return {
-      activeCard: "login",
-      email: "",
-      password: "",
-      rememberMe: false,
-      loginError: "",
-      newEmail: "",
-      newPassword: "",
-      confirmPassword: "",
-      termsAccepted: false,
-      signupError: "",
-    };
-  },
   methods: {
-    switchToSignup() {
-      this.activeCard = "signup";
-      this.triggerCardAnimation();
-    },
-    switchToLogin() {
-      this.activeCard = "login";
-      this.triggerCardAnimation();
-    },
-    triggerCardAnimation() {
-      const cards = document.querySelectorAll(".card");
-      cards.forEach((card) => {
-        if (card.classList.contains("active")) {
-          card.classList.remove("active");
-          card.classList.add("backward");
-        } else {
-          card.classList.remove("backward");
-          card.classList.add("enter");
-          setTimeout(() => {
-            card.classList.remove("enter");
-            card.classList.add("active");
-          }, 1000);
-        }
-      });
-    },
-    handleLogin() {
-      if (this.password.length < 6) {
-        this.loginError = "Password must be at least 6 characters long.";
-        return;
-      }
-      alert("Login successful!");
-      this.$store.dispatch("login", { email: this.email });
-      if (this.$route.path !== "/home") {
-        this.$router.push("/home");
-      }
-    },
-    handleRegister() {
-      if (this.newPassword.length < 6) {
-        this.signupError = "Password must be at least 6 characters long.";
-        return;
-      }
-      if (this.newPassword !== this.confirmPassword) {
-        this.signupError = "Passwords do not match.";
-        return;
-      }
-      alert("Registration successful!");
-      this.switchToLogin();
-    },
     handleKakaoLogin() {
       const clientId = process.env.VUE_APP_KAKAO_API_KEY;
       const redirectUri = "https://hyemin-youn.github.io/WSD-Assignment-04/";
       const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
       window.location.href = kakaoAuthUrl;
     },
+    handleKakaoCallback() {
+      const queryParams = new URLSearchParams(window.location.search);
+      const code = queryParams.get('code');
+      if (code) {
+        // 서버로 전송하여 Access Token 요청
+        fetch(`https://kauth.kakao.com/oauth/token`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            grant_type: 'authorization_code',
+            client_id: process.env.VUE_APP_KAKAO_API_KEY,
+            redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/",
+            code: code,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.access_token) {
+              localStorage.setItem('kakaoToken', data.access_token);
+              this.getUserInfo(data.access_token); // 사용자 정보 요청
+            } else {
+              alert('카카오 로그인에 실패했습니다.');
+            }
+          })
+          .catch((error) => {
+            console.error('Token 요청 실패:', error);
+          });
+      }
+    },
+    getUserInfo(token) {
+      // 사용자 정보 요청
+      fetch('https://kapi.kakao.com/v2/user/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          this.$store.dispatch('login', data.kakao_account.profile); // Vuex에 저장
+          this.$router.push('/home'); // 홈으로 리디렉션
+        })
+        .catch((error) => {
+          console.error('사용자 정보 요청 실패:', error);
+        });
+    },
+  },
+  mounted() {
+    // 로그인 콜백 처리
+    this.handleKakaoCallback();
   },
 };
 </script>
+
 
 <style scoped>
 /* 기존 스타일 유지 */
