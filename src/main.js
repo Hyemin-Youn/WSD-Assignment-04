@@ -18,7 +18,6 @@ const app = createApp(App);
 // Kakao SDK 초기화 (CDN 방식)
 window.Kakao.init(process.env.VUE_APP_KAKAO_API_KEY);
 console.log('Kakao SDK initialized:', window.Kakao.isInitialized());
-console.log("Kakao API Key:", process.env.VUE_APP_KAKAO_API_KEY);
 
 // Vue 앱에 플러그인 등록
 app.use(router);
