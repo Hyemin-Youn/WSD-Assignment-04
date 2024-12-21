@@ -88,7 +88,50 @@
 
 <script>
 export default {
+  data() {
+    return {
+      activeCard: "login",
+      email: "",
+      password: "",
+      rememberMe: false,
+      loginError: "",
+      newEmail: "",
+      newPassword: "",
+      confirmPassword: "",
+      termsAccepted: false,
+      signupError: "",
+    };
+  },
   methods: {
+    switchToSignup() {
+      this.activeCard = "signup";
+    },
+    switchToLogin() {
+      this.activeCard = "login";
+    },
+    handleLogin() {
+      if (this.password.length < 6) {
+        this.loginError = "Password must be at least 6 characters long.";
+        return;
+      }
+      alert("Login successful!");
+      this.$store.dispatch("login", { email: this.email });
+      if (this.$route.path !== "/home") {
+        this.$router.push("/home");
+      }
+    },
+    handleRegister() {
+      if (this.newPassword.length < 6) {
+        this.signupError = "Password must be at least 6 characters long.";
+        return;
+      }
+      if (this.newPassword !== this.confirmPassword) {
+        this.signupError = "Passwords do not match.";
+        return;
+      }
+      alert("Registration successful!");
+      this.switchToLogin();
+    },
     handleKakaoLogin() {
       const clientId = process.env.VUE_APP_KAKAO_API_KEY;
       const redirectUri = "https://hyemin-youn.github.io/WSD-Assignment-04/";
@@ -97,16 +140,16 @@ export default {
     },
     handleKakaoCallback() {
       const queryParams = new URLSearchParams(window.location.search);
-      const code = queryParams.get('code');
+      const code = queryParams.get("code");
       if (code) {
         // 서버로 전송하여 Access Token 요청
-        fetch(`https://kauth.kakao.com/oauth/token`, {
-          method: 'POST',
+        fetch("https://kauth.kakao.com/oauth/token", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            "Content-Type": "application/x-www-form-urlencoded",
           },
           body: new URLSearchParams({
-            grant_type: 'authorization_code',
+            grant_type: "authorization_code",
             client_id: process.env.VUE_APP_KAKAO_API_KEY,
             redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/",
             code: code,
@@ -115,31 +158,31 @@ export default {
           .then((response) => response.json())
           .then((data) => {
             if (data.access_token) {
-              localStorage.setItem('kakaoToken', data.access_token);
+              localStorage.setItem("kakaoToken", data.access_token);
               this.getUserInfo(data.access_token); // 사용자 정보 요청
             } else {
-              alert('카카오 로그인에 실패했습니다.');
+              alert("카카오 로그인에 실패했습니다.");
             }
           })
           .catch((error) => {
-            console.error('Token 요청 실패:', error);
+            console.error("Token 요청 실패:", error);
           });
       }
     },
     getUserInfo(token) {
       // 사용자 정보 요청
-      fetch('https://kapi.kakao.com/v2/user/me', {
+      fetch("https://kapi.kakao.com/v2/user/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
         .then((response) => response.json())
         .then((data) => {
-          this.$store.dispatch('login', data.kakao_account.profile); // Vuex에 저장
-          this.$router.push('/home'); // 홈으로 리디렉션
+          this.$store.dispatch("login", data.kakao_account.profile); // Vuex에 저장
+          this.$router.push("/home"); // 홈으로 리디렉션
         })
         .catch((error) => {
-          console.error('사용자 정보 요청 실패:', error);
+          console.error("사용자 정보 요청 실패:", error);
         });
     },
   },
@@ -149,7 +192,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 /* 기존 스타일 유지 */
