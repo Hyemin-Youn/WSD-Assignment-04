@@ -36,52 +36,6 @@
           </p>
         </div>
       </div>
-
-      <!-- 회원가입 카드 -->
-      <div
-        class="card"
-        :class="{ active: activeCard === 'signup', backward: activeCard === 'login' }"
-      >
-        <div class="content">
-          <h2>Sign Up</h2>
-          <form @submit.prevent="handleRegister">
-            <label for="newEmail">Email</label>
-            <input id="newEmail" v-model="newEmail" type="email" required />
-
-            <label for="newPassword">Password</label>
-            <input
-              id="newPassword"
-              v-model="newPassword"
-              type="password"
-              required
-            />
-
-            <label for="confirmPassword">Confirm Password</label>
-            <input
-              id="confirmPassword"
-              v-model="confirmPassword"
-              type="password"
-              required
-            />
-
-            <p v-if="signupError" class="error">{{ signupError }}</p>
-
-            <div class="terms">
-              <input id="terms" v-model="termsAccepted" type="checkbox" />
-              <label for="terms">
-                I have read the <b>Terms and Conditions</b>
-              </label>
-            </div>
-
-            <button type="submit" :disabled="!termsAccepted">
-              Register
-            </button>
-          </form>
-          <p class="switch" @click="switchToLogin">
-            Already have an account? <b>Sign in</b>
-          </p>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -101,6 +55,13 @@ export default {
       termsAccepted: false,
       signupError: "",
     };
+  },
+  created() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get("code");
+    if (code) {
+      this.getAccessToken(code);
+    }
   },
   methods: {
     switchToSignup() {
@@ -155,6 +116,37 @@ export default {
       const redirectUri = "https://hyemin-youn.github.io/WSD-Assignment-04/home";
       const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
       window.location.href = kakaoAuthUrl;
+    },
+    async getAccessToken(code) {
+      const clientId = process.env.VUE_APP_KAKAO_API_KEY;
+      const redirectUri = "https://hyemin-youn.github.io/WSD-Assignment-04/home";
+
+      try {
+        const response = await fetch(
+          `https://kauth.kakao.com/oauth/token`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+              grant_type: "authorization_code",
+              client_id: clientId,
+              redirect_uri: redirectUri,
+              code: code,
+            }),
+          }
+        );
+        const data = await response.json();
+        if (data.access_token) {
+          console.log("Access Token:", data.access_token);
+          // 필요한 추가 작업 (예: 사용자 정보 가져오기, 토큰 저장 등)
+        } else {
+          console.error("Failed to retrieve access token:", data);
+        }
+      } catch (error) {
+        console.error("Error while fetching access token:", error);
+      }
     },
   },
 };
