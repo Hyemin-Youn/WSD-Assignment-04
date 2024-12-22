@@ -9,7 +9,7 @@ import Search from "@/views/Search.vue";
 import PopularInfinite from "@/views/PopularInfinite.vue";
 import PopularTable from "@/views/PopularTable.vue";
 import Popular from "@/components/Popular.vue";
-import KaKaoCallback from "@/components/KaKaoCallback.vue"; // 추가
+import KaKaoCallback from "@/views/KaKaoCallback.vue"; // 추가
 
 const routes = [
   { 
