@@ -28,3 +28,4 @@ app.component('FontAwesomeIcon', FontAwesomeIcon);
 
 // Vue 앱 마운트
 app.mount('#app');
+console.log("Kakao API Key:", process.env.VUE_APP_KAKAO_API_KEY);
