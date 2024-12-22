@@ -14,4 +14,7 @@ module.exports = defineConfig({
       },
     },
   },
+  devServer: {
+    historyApiFallback: true, // 개발 서버에서 history 모드 지원
+  },
 });
