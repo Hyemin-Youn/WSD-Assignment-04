@@ -27,7 +27,7 @@
           body: new URLSearchParams({
             grant_type: "authorization_code",
             client_id: process.env.VUE_APP_KAKAO_API_KEY,
-            redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/kakao-redirect",
+            redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/oauth/callback",
             code: code,
           }),
         })
