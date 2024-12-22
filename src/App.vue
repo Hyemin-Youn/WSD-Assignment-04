@@ -7,18 +7,19 @@
 
 <script>
 import '@fortawesome/fontawesome-free/css/all.css';
-import Banner from './components/Banner.vue'; // 예시
-import Home from './views/Home.vue';
+import Navbar from './components/Navbar.vue'; // Navbar 컴포넌트 추가
 
-
-/* eslint-disable */
 export default {
   components: {
-    Banner,
-    Home,
-  }
+    Navbar,
+  },
+  mounted() {
+    // 루트 경로에서 자동으로 "/signin"으로 리다이렉트
+    if (this.$route.path === "/") {
+      this.$router.push("/signin");
+    }
+  },
 };
-
 </script>
 
 <style>
@@ -28,14 +29,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-
-}
-#app {
   display: flex;
   flex-direction: column;
   height: 100%;
-
 }
-
-
 </style>
