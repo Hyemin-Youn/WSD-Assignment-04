@@ -181,7 +181,7 @@ export default {
         .then((data) => {
           if (data.access_token) {
             localStorage.setItem("kakaoToken", data.access_token);
-            this.$router.push("/home"); // 로그인 성공 시 홈으로 리다이렉트
+            this.$router.push("/#/home"); // 로그인 성공 시 홈으로 리다이렉트
           } else {
             console.error("Failed to get Access Token:", data);
           }

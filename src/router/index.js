@@ -65,7 +65,7 @@ const routes = [
   {
     path: "/kakao-redirect",
     name: "KakaoRedirect",
-    component: KakaoRedirect,
+    component: () => import('@/components/KakaoRedirect.vue'),
   },
 
 
