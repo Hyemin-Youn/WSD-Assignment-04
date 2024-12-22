@@ -152,7 +152,7 @@ export default {
     },
     handleKakaoLogin() {
       const clientId = process.env.VUE_APP_KAKAO_API_KEY;
-      const redirectUri = "https://hyemin-youn.github.io/WSD-Assignment-04/oauth/callback";
+      const redirectUri = "https://hyemin-youn.github.io/WSD-Assignment-04/";
       const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
       window.location.href = kakaoAuthUrl;
     },
