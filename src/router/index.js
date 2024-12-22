@@ -30,22 +30,22 @@ const routes = [
   },  
   {
     path: "/movies/:id",
-    component: MovieDetail 
+    component: MovieDetail,
   },
   {
     path: '/wishlist',
     name: 'Wishlist',
-    component: Wishlist 
+    component: Wishlist,
   },
   {
     path: "/slider",
     name: 'SliderContent',
-    component: SliderContent, 
+    component: SliderContent,
   },
   {
     path: "/popular",
     component: Popular,
-    redirect: "/popular/table", 
+    redirect: "/popular/table",
     children: [
       {
         path: "table",
@@ -63,7 +63,7 @@ const routes = [
     component: Search,
   },
   {
-    path: "/kakao-redirect", // 추가된 경로
+    path: "/kakao-callback", // 경로 수정
     name: "KaKaoCallback",
     component: KaKaoCallback,
   },
