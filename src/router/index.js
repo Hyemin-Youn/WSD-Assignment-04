@@ -71,10 +71,11 @@ const routes = [
   
 ];
 
-const router = createRouter({
-  history: createWebHashHistory(),
+const router = new VueRouter({
+  mode: "hash", // Hash 모드 사용
   routes,
 });
+
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = store.getters.isAuthenticated;
