@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import SignIn from '../components/sign-in/SignIn.vue';
 import Wishlist from '../views/WishList.vue';
@@ -9,6 +9,7 @@ import Search from "@/views/Search.vue";
 import PopularInfinite from "@/views/PopularInfinite.vue";
 import PopularTable from "@/views/PopularTable.vue";
 import Popular from "@/components/Popular.vue";
+
 
 const routes = [
   { 
@@ -64,7 +65,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(), // Hash 모드 대신 History 모드 사용
+  history: createWebHashHistory(),
   routes,
 });
 
@@ -79,5 +80,6 @@ router.beforeEach((to, from, next) => {
     next(); // 나머지는 통과
   }
 });
+
 
 export default router;
