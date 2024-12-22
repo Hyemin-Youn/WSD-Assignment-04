@@ -30,7 +30,7 @@ alt="Movie Background"
     },
     methods: {
       async fetchMovieDetail() {
-        const API_KEY = process.env.VUE_APP_API_KEY;
+        const API_KEY = process.env.VUE_APP_TMDB_API_KEY;
         const movieId = this.$route.params.id;
         try {
           const response = await axios.get(
