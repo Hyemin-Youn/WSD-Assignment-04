@@ -9,14 +9,14 @@ import Search from "@/views/Search.vue";
 import PopularInfinite from "@/views/PopularInfinite.vue";
 import PopularTable from "@/views/PopularTable.vue";
 import Popular from "@/components/Popular.vue";
-
+import KaKaoCallback from "@/components/KaKaoCallback.vue"; // 추가
 
 const routes = [
   { 
     path: '/signin', 
     name: 'SignIn', 
     component: SignIn,
-    meta: { hideNavbar: true }, // Navbar를 숨기기 위한 메타 데이터
+    meta: { hideNavbar: true },
   },
   { 
     path: '/home', 
@@ -45,7 +45,7 @@ const routes = [
   {
     path: "/popular",
     component: Popular,
-    redirect: "/popular/table", // 기본적으로 Table View로 리디렉션
+    redirect: "/popular/table", 
     children: [
       {
         path: "table",
@@ -62,10 +62,15 @@ const routes = [
     name: "Search",
     component: Search,
   },
+  {
+    path: "/kakao-redirect", // 추가된 경로
+    name: "KaKaoCallback",
+    component: KaKaoCallback,
+  },
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHashHistory(), 
   routes,
 });
 
@@ -73,9 +78,9 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = store.getters.isAuthenticated;
 
   if (to.name === 'SignIn' && isAuthenticated) {
-    next('/home'); // 인증된 사용자가 로그인 페이지로 접근할 때
+    next('/home'); 
   } else {
-    next(); // 나머지 경우는 통과
+    next(); 
   }
 });
 
