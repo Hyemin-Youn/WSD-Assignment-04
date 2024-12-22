@@ -65,7 +65,7 @@ export default {
       }
     },
     async fetchHeroMovie() {
-      const API_KEY = process.env.VUE_APP_API_KEY;
+      const API_KEY = process.env.VUE_APP_TMDB_API_KEY;
       try {
         const response = await axios.get(
           `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=ko-KR`
@@ -76,7 +76,7 @@ export default {
       }
     },
     async fetchMovies() {
-      const API_KEY = process.env.VUE_APP_API_KEY;
+      const API_KEY = process.env.VUE_APP_TMDB_API_KEY;
       try {
         const requests = this.movieCategories.map(async (category) => {
           const response = await axios.get(
