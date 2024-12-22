@@ -62,6 +62,12 @@ const routes = [
     name: "Search",
     component: Search,
   },
+  {
+    path: '/oauth/callback',
+    name: 'KakaoCallback',
+    component: () => import('@/views/KakaoCallback.vue'),
+  },
+  
 ];
 
 const router = createRouter({
