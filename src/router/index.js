@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import SignIn from '../components/sign-in/SignIn.vue';
 import Wishlist from '../views/WishList.vue';
@@ -9,6 +9,7 @@ import Search from "@/views/Search.vue";
 import PopularInfinite from "@/views/PopularInfinite.vue";
 import PopularTable from "@/views/PopularTable.vue";
 import Popular from "@/components/Popular.vue";
+
 
 const routes = [
   { 
@@ -64,19 +65,17 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(), // Hash 모드 대신 History 모드 사용
+  history: createWebHashHistory(),
   routes,
 });
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = store.getters.isAuthenticated;
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next("/signin"); // 인증이 필요한 페이지에 접근하려는 경우
-  } else if (to.name === "SignIn" && isAuthenticated) {
-    next("/home"); // 이미 로그인된 사용자가 로그인 페이지에 접근하려는 경우
+  if (to.name === 'SignIn' && isAuthenticated) {
+    next('/home'); // 인증된 사용자가 로그인 페이지로 접근할 때
   } else {
-    next(); // 나머지는 통과
+    next(); // 나머지 경우는 통과
   }
 });
 
