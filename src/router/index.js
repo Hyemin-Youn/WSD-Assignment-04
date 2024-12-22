@@ -9,8 +9,8 @@ import Search from "@/views/Search.vue";
 import PopularInfinite from "@/views/PopularInfinite.vue";
 import PopularTable from "@/views/PopularTable.vue";
 import Popular from "@/components/Popular.vue";
-import KakaoRedirect from "@/views/KakaoRedirect.vue";
-
+import KakaoRedirect from "@/views/KakaoCallback.vue";
+import KakaoRedirect from "@/views/KaKaoRedirect.vue";
 
 const routes = [
   { 
@@ -68,6 +68,7 @@ const routes = [
     name: "KakaoRedirect",
     component: KakaoRedirect,
   },
+
 
     
   
