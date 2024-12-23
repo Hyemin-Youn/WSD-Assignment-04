@@ -1,4 +1,4 @@
-import { createStore } from "vuex";
+\import { createStore } from "vuex";
 
 const store = createStore({
   state: {
@@ -9,23 +9,19 @@ const store = createStore({
     searchResults: JSON.parse(localStorage.getItem("searchResults")) || [], // 검색 결과 저장
   },
   mutations: {
-    setUser(state, { user, token }) {
+    setUser(state, user) {
       state.user = user;
       state.isAuthenticated = !!user;
-
       if (user) {
         localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("kakaoToken", token); // 토큰 저장
       } else {
         localStorage.removeItem("user");
-        localStorage.removeItem("kakaoToken"); // 토큰 제거
       }
     },
     logout(state) {
       state.user = null;
       state.isAuthenticated = false;
       localStorage.removeItem("user");
-      localStorage.removeItem("kakaoToken");
     },
     TOGGLE_WISHLIST(state, movie) {
       const existingMovieIndex = state.wishlist.findIndex(
@@ -67,12 +63,6 @@ const store = createStore({
     },
   },
   actions: {
-    login({ commit }, { user, token }) {
-      commit("setUser", { user, token });
-    },
-    logout({ commit }) {
-      commit("logout");
-    },
     toggleWishlist({ commit }, movie) {
       commit("TOGGLE_WISHLIST", movie);
     },
@@ -94,8 +84,6 @@ const store = createStore({
     },
     recentSearches: (state) => state.recentSearches, // 최근 검색어 가져오기
     searchResults: (state) => state.searchResults, // 저장된 검색 결과 가져오기
-    isAuthenticated: (state) => state.isAuthenticated, // 인증 여부 확인
-    user: (state) => state.user, // 사용자 정보 가져오기
   },
 });
 
