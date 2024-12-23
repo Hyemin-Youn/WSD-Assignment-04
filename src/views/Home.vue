@@ -76,7 +76,7 @@ export default {
       }
     },
     async fetchMovies() {
-      const API_KEY = process.env.VUE_APP_TMDB_API_KEY;
+      const API_KEY = process.env.VUE_APP_TMDB_API_KEY; // 환경 변수에서 API 키를 가져옴
       try {
         const requests = this.movieCategories.map(async (category) => {
           const response = await axios.get(
@@ -86,9 +86,10 @@ export default {
         });
         await Promise.all(requests);
       } catch (error) {
-        console.error("Movie Categories 로드 실패:", error);
+        console.error("Movie Categories 로드 실패.", error);
       }
     },
+
   },
 };
 </script>
