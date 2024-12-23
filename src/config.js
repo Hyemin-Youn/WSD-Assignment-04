@@ -6,3 +6,4 @@ export const KAKAO_API_KEY = process.env.VUE_APP_KAKAO_API_KEY;
 
 // Kakao Redirect URI
 export const KAKAO_REDIRECT_URI = process.env.VUE_APP_KAKAO_REDIRECT_URI;
+export const KAKAO_JAVASCRIPT_KEY = process.env.VUE_APP_KAKAO_REST_API_KEY;
