@@ -173,7 +173,7 @@ export default {
         body: new URLSearchParams({
           grant_type: "authorization_code",
           client_id: process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY,
-          redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/",
+          redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/kakao-callback",
           code: code,
         }),
       })
