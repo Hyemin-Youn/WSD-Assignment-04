@@ -159,7 +159,7 @@ export default {
       this.switchToLogin();
     },
     handleKakaoLogin() {
-      const clientId = process.env.VUE_APP_KAKAO_API_KEY;
+      const clientId = process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY;
       const redirectUri = "https://hyemin-youn.github.io/WSD-Assignment-04/kakao-callback";
       const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
       window.location.href = kakaoAuthUrl;
@@ -172,7 +172,7 @@ export default {
         },
         body: new URLSearchParams({
           grant_type: "authorization_code",
-          client_id: process.env.VUE_APP_KAKAO_API_KEY,
+          client_id: process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY,
           redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/",
           code: code,
         }),
