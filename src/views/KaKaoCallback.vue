@@ -30,7 +30,7 @@ export default {
         body: new URLSearchParams({
           grant_type: "authorization_code",
           client_id: process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY, // 환경 변수에 저장된 JavaScript 키
-          redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/kakao-callback", // 리다이렉트 URI
+          redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/signin", // 리다이렉트 URI
           code: code,
         }),
       })
