@@ -68,7 +68,7 @@ export default {
       const API_KEY = process.env.VUE_APP_TMDB_API_KEY;
       try {
         const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=ko-KR`
+          `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=ko-KR`
         );
         this.heroMovie = response.data.results[0];
       } catch (error) {
@@ -80,7 +80,7 @@ export default {
       try {
         const requests = this.movieCategories.map(async (category) => {
           const response = await axios.get(
-            `https://api.themoviedb.org/3/movie/${category.name}?api_key=${API_KEY}&language=ko-KR`
+            `https://api.themoviedb.org/3/movie/${category.name}?api_key=${TMDB_API_KEY}&language=ko-KR`
           );
           category.movies = response.data.results;
         });
