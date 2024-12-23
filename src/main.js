@@ -15,10 +15,6 @@ library.add(faAngleLeft, faAngleRight, faHeart, faShareNodes);
 
 const app = createApp(App);
 
-// Kakao SDK 초기화 (CDN 방식)
-window.Kakao.init(process.env.VUE_APP_KAKAO_API_KEY);
-console.log("Kakao API Key:", process.env.VUE_APP_KAKAO_API_KEY);
-
 // Vue 앱에 플러그인 등록
 app.use(router);
 app.use(store);
@@ -28,4 +24,3 @@ app.component('FontAwesomeIcon', FontAwesomeIcon);
 
 // Vue 앱 마운트
 app.mount('#app');
-console.log("Kakao API Key:", process.env.VUE_APP_KAKAO_API_KEY);
