@@ -192,39 +192,6 @@ export default {
 };
 </script>
 
-<style scoped>
-/* 기존 스타일 유지 */
-/* 배경 이미지 */
-.bg-image {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('https://images.unsplash.com/photo-1512070679279-8988d32161be?q=80&w=1938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-  background-size: cover;
-  background-position: center;
-  z-index: -1;
-}
-
-/* 컨테이너 */
-.wrapper {
-  width: 90%;
-  max-width: 600px; /* 데스크톱에서는 최대 600px */
-  height: auto; /* 높이를 콘텐츠에 따라 조정 */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  perspective: 1000px;
-}
-
-/* 나머지 스타일 유지 */
-</style>
-
 
 <style scoped>
 /* 기존 스타일 유지 */
