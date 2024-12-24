@@ -104,37 +104,13 @@ export default {
   },
   mounted() {
     const query = new URLSearchParams(window.location.search);
-    const code = query.get('code');
+    const code = query.get("code");
 
     if (code) {
       this.handleKakaoCallback(code); // 카카오 로그인 토큰 처리 함수 호출
     }
   },
   methods: {
-    switchToSignup() {
-      this.activeCard = "signup";
-      this.triggerCardAnimation();
-    },
-    switchToLogin() {
-      this.activeCard = "login";
-      this.triggerCardAnimation();
-    },
-    triggerCardAnimation() {
-      const cards = document.querySelectorAll(".card");
-      cards.forEach((card) => {
-        if (card.classList.contains("active")) {
-          card.classList.remove("active");
-          card.classList.add("backward");
-        } else {
-          card.classList.remove("backward");
-          card.classList.add("enter");
-          setTimeout(() => {
-            card.classList.remove("enter");
-            card.classList.add("active");
-          }, 1000);
-        }
-      });
-    },
     handleLogin() {
       if (this.password.length < 6) {
         this.loginError = "Password must be at least 6 characters long.";
@@ -146,47 +122,42 @@ export default {
         this.$router.push("/home");
       }
     },
-    handleRegister() {
-      if (this.newPassword.length < 6) {
-        this.signupError = "Password must be at least 6 characters long.";
-        return;
-      }
-      if (this.newPassword !== this.confirmPassword) {
-        this.signupError = "Passwords do not match.";
-        return;
-      }
-      alert("Registration successful!");
-      this.switchToLogin();
-    },
     handleKakaoLogin() {
       const clientId = process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY;
       const redirectUri = "https://hyemin-youn.github.io/WSD-Assignment-04/";
       const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
       window.location.href = kakaoAuthUrl;
     },
-    handleKakaoCallback(code) {
-      fetch("https://kauth.kakao.com/oauth/token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          grant_type: "authorization_code",
-          client_id: process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY,
-          redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/",
-          code: code,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.access_token) {
-            localStorage.setItem("kakaoToken", data.access_token);
-            this.$router.push("/home"); // 로그인 성공 시 홈으로 리다이렉트
-          } else {
-            console.error("Failed to get Access Token:", data);
-          }
-        })
-        .catch((error) => console.error("Error during token exchange:", error));
+    async handleKakaoCallback(code) {
+      try {
+        const tokenResponse = await fetch("https://kauth.kakao.com/oauth/token", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            grant_type: "authorization_code",
+            client_id: process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY,
+            redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/",
+            code: code,
+          }),
+        });
+        const tokenData = await tokenResponse.json();
+
+        if (tokenData.access_token) {
+          localStorage.setItem("kakaoToken", tokenData.access_token);
+
+          const userInfoResponse = await fetch("https://kapi.kakao.com/v2/user/me", {
+            headers: { Authorization: `Bearer ${tokenData.access_token}` },
+          });
+          const userInfo = await userInfoResponse.json();
+
+          this.$store.commit("setUserName", userInfo.properties.nickname);
+          this.$router.push("/home");
+        } else {
+          console.error("Failed to get Access Token:", tokenData);
+        }
+      } catch (error) {
+        console.error("Error during token exchange:", error);
+      }
     },
   },
 };
