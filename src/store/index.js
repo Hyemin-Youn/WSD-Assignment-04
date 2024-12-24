@@ -7,6 +7,7 @@ const store = createStore({
     wishlist: JSON.parse(localStorage.getItem("wishlist")) || [], // 찜 목록
     recentSearches: JSON.parse(localStorage.getItem("recentSearches")) || [], // 최근 검색어 목록
     searchResults: JSON.parse(localStorage.getItem("searchResults")) || [], // 검색 결과 저장
+    userName: null, // 사용자 이름
   },
   mutations: {
     setUser(state, user) {
@@ -61,6 +62,9 @@ const store = createStore({
       state.searchResults = results; // 검색 결과 저장
       localStorage.setItem("searchResults", JSON.stringify(results));
     },
+    setUserName(state, name) {
+      state.userName = name; // 사용자 이름 설정
+    },
   },
   actions: {
     toggleWishlist({ commit }, movie) {
@@ -87,13 +91,4 @@ const store = createStore({
   },
 });
 
-export default {
-  state: {
-    userName: null,
-  },
-  mutations: {
-    setUserName(state, name) {
-      state.userName = name;
-    },
-  },
-};
+export default store;
