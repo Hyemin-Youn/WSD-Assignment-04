@@ -3,10 +3,7 @@
     <div class="bg-image" />
     <div class="wrapper">
       <!-- 로그인 카드 -->
-      <div
-        class="card"
-        :class="{ active: activeCard === 'login', backward: activeCard === 'signup' }"
-      >
+      <div class="card" :class="{ active: activeCard === 'login', backward: activeCard === 'signup' }">
         <div class="content">
           <h2>Login</h2>
           <form @submit.prevent="handleLogin">
@@ -27,9 +24,7 @@
           </form>
 
           <!-- 카카오 로그인 버튼 -->
-          <button class="kakao-login" @click="handleKakaoLogin">
-            카카오 로그인
-          </button>
+          <button class="kakao-login" @click="handleKakaoLogin">카카오 로그인</button>
 
           <p class="switch" @click="switchToSignup">
             Don't have an account? <b>Sign up</b>
@@ -38,10 +33,7 @@
       </div>
 
       <!-- 회원가입 카드 -->
-      <div
-        class="card"
-        :class="{ active: activeCard === 'signup', backward: activeCard === 'login' }"
-      >
+      <div class="card" :class="{ active: activeCard === 'signup', backward: activeCard === 'login' }">
         <div class="content">
           <h2>Sign Up</h2>
           <form @submit.prevent="handleRegister">
@@ -49,33 +41,19 @@
             <input id="newEmail" v-model="newEmail" type="email" required />
 
             <label for="newPassword">Password</label>
-            <input
-              id="newPassword"
-              v-model="newPassword"
-              type="password"
-              required
-            />
+            <input id="newPassword" v-model="newPassword" type="password" required />
 
             <label for="confirmPassword">Confirm Password</label>
-            <input
-              id="confirmPassword"
-              v-model="confirmPassword"
-              type="password"
-              required
-            />
+            <input id="confirmPassword" v-model="confirmPassword" type="password" required />
 
             <p v-if="signupError" class="error">{{ signupError }}</p>
 
             <div class="terms">
               <input id="terms" v-model="termsAccepted" type="checkbox" />
-              <label for="terms">
-                I have read the <b>Terms and Conditions</b>
-              </label>
+              <label for="terms">I have read the <b>Terms and Conditions</b></label>
             </div>
 
-            <button type="submit" :disabled="!termsAccepted">
-              Register
-            </button>
+            <button type="submit" :disabled="!termsAccepted">Register</button>
           </form>
           <p class="switch" @click="switchToLogin">
             Already have an account? <b>Sign in</b>
@@ -111,6 +89,12 @@ export default {
     }
   },
   methods: {
+    switchToSignup() {
+      this.activeCard = "signup";
+    },
+    switchToLogin() {
+      this.activeCard = "login";
+    },
     handleLogin() {
       if (this.password.length < 6) {
         this.loginError = "Password must be at least 6 characters long.";
@@ -122,7 +106,7 @@ export default {
         this.$router.push("/home");
       }
     },
-    handleKakaoLogin() {
+    async handleKakaoLogin() {
       const clientId = process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY;
       const redirectUri = "https://hyemin-youn.github.io/WSD-Assignment-04/";
       const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
@@ -130,6 +114,7 @@ export default {
     },
     async handleKakaoCallback(code) {
       try {
+        // 카카오 토큰 요청
         const tokenResponse = await fetch("https://kauth.kakao.com/oauth/token", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -143,17 +128,26 @@ export default {
         const tokenData = await tokenResponse.json();
 
         if (tokenData.access_token) {
+          // 토큰 저장
           localStorage.setItem("kakaoToken", tokenData.access_token);
 
+          // 사용자 정보 요청
           const userInfoResponse = await fetch("https://kapi.kakao.com/v2/user/me", {
-            headers: { Authorization: `Bearer ${tokenData.access_token}` },
+            headers: {
+              Authorization: `Bearer ${tokenData.access_token}`,
+            },
           });
           const userInfo = await userInfoResponse.json();
 
-          this.$store.commit("setUserName", userInfo.properties.nickname);
-          this.$router.push("/home");
+          if (userInfo.id && userInfo.properties?.nickname) {
+            this.$store.commit("setUserName", userInfo.properties.nickname);
+            alert(`환영합니다, ${userInfo.properties.nickname}!`);
+            this.$router.push("/home");
+          } else {
+            console.error("사용자 정보 없음:", userInfo);
+          }
         } else {
-          console.error("Failed to get Access Token:", tokenData);
+          console.error("Access Token 획득 실패:", tokenData);
         }
       } catch (error) {
         console.error("Error during token exchange:", error);
@@ -162,39 +156,6 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/* 기존 스타일 유지 */
-/* 배경 이미지 */
-.bg-image {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('https://images.unsplash.com/photo-1512070679279-8988d32161be?q=80&w=1938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-  background-size: cover;
-  background-position: center;
-  z-index: -1;
-}
-
-/* 컨테이너 */
-.wrapper {
-  width: 90%;
-  max-width: 600px; /* 데스크톱에서는 최대 600px */
-  height: auto; /* 높이를 콘텐츠에 따라 조정 */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  perspective: 1000px;
-}
-
-/* 나머지 스타일 유지 */
-</style>
 
 
 <style scoped>
