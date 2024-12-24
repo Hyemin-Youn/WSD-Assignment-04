@@ -2,20 +2,44 @@
   <nav :class="['navbar', { 'navbar-scrolled': isScrolled }]">
     <div class="navbar-left">
       <router-link to="/home">
-        <img src="@/assets/logo.png" alt="Logo" class="logo">
+        <img
+src="@/assets/logo.png"
+alt="Logo"
+class="logo"
+>
       </router-link>
 
       <ul class="nav-links">
-        <li><router-link to="/home">홈</router-link></li>
-        <li><router-link to="/popular">대세 콘텐츠</router-link></li>
-        <li><router-link to="/search">찾아보기</router-link></li>
-        <li><router-link to="/wishlist">내가 찜한 리스트</router-link></li>
+        <li>
+<router-link to="/home">
+홈
+</router-link>
+</li>
+        <li>
+<router-link to="/popular">
+대세 콘텐츠
+</router-link>
+</li>
+        <li>
+<router-link to="/search">
+찾아보기
+</router-link>
+</li>
+        <li>
+<router-link to="/wishlist">
+내가 찜한 리스트
+</router-link>
+</li>
       </ul>
     </div>
 
     <div class="navbar-right">
-      <span>{{ userNickname }}</span>
-      <img src="@/assets/profile-icon.png" alt="Profile" class="profile-icon" @click="logout">
+      <img
+        src="@/assets/profile-icon.png"
+        alt="Profile"
+        class="profile-icon"
+        @click="logout"
+      >
     </div>
   </nav>
 </template>
@@ -27,11 +51,6 @@ export default {
     return {
       isScrolled: false, // 스크롤 상태 관리
     };
-  },
-  computed: {
-    userNickname() {
-      return this.$store.state.userNickname;
-    },
   },
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
@@ -45,7 +64,10 @@ export default {
       this.isScrolled = window.scrollY > 50;
     },
     logout() {
-      this.$store.commit("logout");
+      localStorage.removeItem("user");
+      if (this.$store) {
+        this.$store.dispatch("logout");
+      }
       this.$router.push("/signin");
     },
   },
@@ -116,7 +138,6 @@ body {
   align-items: center;
   justify-content: flex-end;
   margin-left: auto;
-  gap: 10px;
 }
 
 .profile-icon {
@@ -172,3 +193,5 @@ body {
   display: none; /* Chrome, Safari, Edge 스크롤바 숨기기 */
 }
 </style>
+
+
