@@ -87,8 +87,6 @@
 </template>
 
 <script>
-import { getKakaoToken, getKakaoUserInfo } from "@/api/kakao";
-
 export default {
   data() {
     return {
@@ -106,7 +104,7 @@ export default {
   },
   mounted() {
     const query = new URLSearchParams(window.location.search);
-    const code = query.get("code");
+    const code = query.get('code');
 
     if (code) {
       this.handleKakaoCallback(code); // 카카오 로그인 토큰 처리 함수 호출
@@ -160,20 +158,35 @@ export default {
       alert("Registration successful!");
       this.switchToLogin();
     },
-    async handleKakaoLogin() {
+    handleKakaoLogin() {
       const clientId = process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY;
       const redirectUri = "https://hyemin-youn.github.io/WSD-Assignment-04/";
       const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
       window.location.href = kakaoAuthUrl;
     },
-    async handleKakaoCallback(code) {
-      const tokenData = await getKakaoToken(code);
-      if (tokenData.access_token) {
-        const userInfo = await getKakaoUserInfo(tokenData.access_token);
-        this.$store.commit("setUser", userInfo);
-        this.$store.commit("setUserName", userInfo.properties.nickname);
-        this.$router.push("/home");
-      }
+    handleKakaoCallback(code) {
+      fetch("https://kauth.kakao.com/oauth/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          client_id: process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY,
+          redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/",
+          code: code,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.access_token) {
+            localStorage.setItem("kakaoToken", data.access_token);
+            this.$router.push("/home"); // 로그인 성공 시 홈으로 리다이렉트
+          } else {
+            console.error("Failed to get Access Token:", data);
+          }
+        })
+        .catch((error) => console.error("Error during token exchange:", error));
     },
   },
 };
