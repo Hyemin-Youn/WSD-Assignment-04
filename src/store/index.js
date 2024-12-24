@@ -87,4 +87,13 @@ const store = createStore({
   },
 });
 
-export default store;
+export default {
+  state: {
+    userName: null,
+  },
+  mutations: {
+    setUserName(state, name) {
+      state.userName = name;
+    },
+  },
+};
