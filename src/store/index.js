@@ -3,7 +3,6 @@ import { createStore } from "vuex";
 const store = createStore({
   state: {
     user: JSON.parse(localStorage.getItem("user")) || null, // 사용자 정보
-    userNickname: localStorage.getItem("userNickname") || "", // 사용자 닉네임
     isAuthenticated: !!localStorage.getItem("user"), // 인증 상태
     wishlist: JSON.parse(localStorage.getItem("wishlist")) || [], // 찜 목록
     recentSearches: JSON.parse(localStorage.getItem("recentSearches")) || [], // 최근 검색어 목록
@@ -19,16 +18,10 @@ const store = createStore({
         localStorage.removeItem("user");
       }
     },
-    setUserName(state, nickname) {
-      state.userNickname = nickname;
-      localStorage.setItem("userNickname", nickname);
-    },
     logout(state) {
       state.user = null;
-      state.userNickname = "";
       state.isAuthenticated = false;
       localStorage.removeItem("user");
-      localStorage.removeItem("userNickname");
     },
     TOGGLE_WISHLIST(state, movie) {
       const existingMovieIndex = state.wishlist.findIndex(
@@ -91,7 +84,6 @@ const store = createStore({
     },
     recentSearches: (state) => state.recentSearches, // 최근 검색어 가져오기
     searchResults: (state) => state.searchResults, // 저장된 검색 결과 가져오기
-    userNickname: (state) => state.userNickname, // 사용자 닉네임 가져오기
   },
 });
 
