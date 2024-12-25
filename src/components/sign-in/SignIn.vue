@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- Header 컴포넌트 -->
-    <Header @kakao-login="handleKakaoLogin" />
 
     <div class="bg-image" />
     <div class="wrapper">
