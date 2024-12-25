@@ -1,23 +1,13 @@
 <template>
   <div>
     <Navbar />
-
     <div class="home">
-      <div
-v-if="isLoading"
-class="loading-overlay"
->
+      <div v-if="isLoading" class="loading-overlay">
         <p>로딩중...</p>
       </div>
-
       <div v-else>
         <Banner :heroMovie="heroMovie" />
-        
-        <div
-v-for="category in movieCategories"
-:key="category.name"
-class="movie-category"
->
+        <div v-for="category in movieCategories" :key="category.name" class="movie-category">
           <h3>{{ category.title }}</h3>
           <SliderContent :movies="category.movies" />
         </div>
@@ -31,6 +21,7 @@ import axios from "axios";
 import Banner from "@/components/Banner.vue";
 import Navbar from "@/components/Navbar.vue";
 import SliderContent from "@/components/SliderContent.vue";
+import store from "@/store"; // Vuex store 가져오기
 
 export default {
   name: "Home",
@@ -52,7 +43,12 @@ export default {
     };
   },
   created() {
-    this.loadData();
+    // 인증 여부 체크
+    if (!store.getters.isAuthenticated) {
+      this.$router.push("/signin");
+    } else {
+      this.loadData();
+    }
   },
   methods: {
     async loadData() {
@@ -60,6 +56,7 @@ export default {
         await Promise.all([this.fetchHeroMovie(), this.fetchMovies()]);
       } catch (error) {
         console.error("Error loading data:", error);
+        alert("영화 데이터를 불러오는데 실패했습니다. 나중에 다시 시도해 주세요.");
       } finally {
         this.isLoading = false;
       }
@@ -73,10 +70,11 @@ export default {
         this.heroMovie = response.data.results[0];
       } catch (error) {
         console.error("Hero Movie 로드 실패:", error);
+        alert("메인 영화를 불러오지 못했습니다.");
       }
     },
     async fetchMovies() {
-      const TMDB_API_KEY = process.env.VUE_APP_TMDB_API_KEY; // 환경 변수에서 API 키를 가져옴
+      const TMDB_API_KEY = process.env.VUE_APP_TMDB_API_KEY;
       try {
         const requests = this.movieCategories.map(async (category) => {
           const response = await axios.get(
@@ -87,9 +85,9 @@ export default {
         await Promise.all(requests);
       } catch (error) {
         console.error("Movie Categories 로드 실패.", error);
+        alert("카테고리 데이터를 불러오는데 실패했습니다.");
       }
     },
-
   },
 };
 </script>
