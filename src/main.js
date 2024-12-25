@@ -13,6 +13,12 @@ import { faAngleLeft, faAngleRight, faHeart, faShareNodes } from '@fortawesome/f
 // 필요한 아이콘 추가
 library.add(faAngleLeft, faAngleRight, faHeart, faShareNodes);
 
+// 카카오 SDK 초기화 추가
+if (!window.Kakao.isInitialized()) {
+  window.Kakao.init(process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY); // .env 파일에서 JavaScript Key를 가져옵니다
+  console.log('Kakao SDK 초기화 상태:', window.Kakao.isInitialized());
+}
+
 const app = createApp(App);
 
 // Vue 앱에 플러그인 등록
