@@ -7,7 +7,7 @@
 
 <script>
 import '@fortawesome/fontawesome-free/css/all.css';
-import KakaoLogin from "../components/KakaoLogin.vue";
+import KakaoLogin from "./src/components/KakaoLogin.vue";
 
 export default {
   components: {
