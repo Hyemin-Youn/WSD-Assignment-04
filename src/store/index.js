@@ -22,6 +22,7 @@ const store = createStore({
       state.user = null;
       state.isAuthenticated = false;
       localStorage.removeItem("user");
+      localStorage.removeItem("kakaoToken"); // 카카오 토큰도 제거
     },
     TOGGLE_WISHLIST(state, movie) {
       const existingMovieIndex = state.wishlist.findIndex(
@@ -84,6 +85,24 @@ const store = createStore({
       // 로그아웃 처리
       commit("logout");
     },
+    async fetchKakaoUser({ commit }, token) {
+      try {
+        const response = await fetch("https://kapi.kakao.com/v2/user/me", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        const userInfo = {
+          nickname: data.properties.nickname,
+          profile_image: data.properties.profile_image,
+        };
+        commit("setUser", userInfo);
+      } catch (error) {
+        console.error("카카오 사용자 정보 가져오기 실패:", error);
+      }
+    },
   },
   getters: {
     wishlist: (state) => state.wishlist, // 찜 목록 가져오기
@@ -97,17 +116,4 @@ const store = createStore({
   },
 });
 
-export default createStore({
-  state: {
-    user: null,
-  },
-  mutations: {
-    setUser(state, user) {
-      state.user = user;
-    },
-    logout(state) {
-      state.user = null;
-      localStorage.removeItem("kakaoToken");
-    },
-  },
-});
+export default store;
