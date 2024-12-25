@@ -1,7 +1,6 @@
 <template>
   <div>
     <Navbar />
-    <KaKaoLogin />
     <div class="home">
       <div v-if="isLoading" class="loading-overlay">
         <p>로딩중...</p>
