@@ -30,7 +30,7 @@ export default {
         body: new URLSearchParams({
           grant_type: "authorization_code",
           client_id: process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY, // 환경 변수에 저장된 JavaScript 키
-          redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/", // 리다이렉트 URI
+          redirect_uri: process.env.VUE_APP_KAKAO_REDIRECT_URI, // 리다이렉트 URI
           code: code,
         }),
       })
@@ -40,8 +40,8 @@ export default {
             // Access Token 저장
             localStorage.setItem("kakaoToken", data.access_token);
 
-            // 홈 화면으로 리다이렉트
-            this.$router.push("/home");
+            // 사용자 정보 요청
+            this.getUserInfo(data.access_token);
           } else {
             console.error("Access Token 발급 실패:", data);
             this.$router.push("/signin"); // 실패 시 로그인 페이지로 이동
@@ -49,6 +49,30 @@ export default {
         })
         .catch((error) => {
           console.error("Access Token 요청 중 오류 발생:", error);
+          this.$router.push("/signin"); // 오류 발생 시 로그인 페이지로 이동
+        });
+    },
+    getUserInfo(token) {
+      fetch("https://kapi.kakao.com/v2/user/me", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const userInfo = {
+            nickname: data.properties.nickname,
+            profile_image: data.properties.profile_image,
+          };
+          // 사용자 정보를 Vuex Store에 저장
+          this.$store.commit("setUser", userInfo);
+
+          // 홈 화면으로 리다이렉트
+          this.$router.push("/home");
+        })
+        .catch((error) => {
+          console.error("사용자 정보 요청 중 오류 발생:", error);
           this.$router.push("/signin"); // 오류 발생 시 로그인 페이지로 이동
         });
     },
