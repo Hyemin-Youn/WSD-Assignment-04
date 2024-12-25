@@ -1,6 +1,9 @@
 <template>
   <div>
     <Navbar />
+    <Header />
+    <KaKaoLogin />
+    
     <div class="home">
       <div v-if="isLoading" class="loading-overlay">
         <p>로딩중...</p>
@@ -22,6 +25,8 @@ import Banner from "@/components/Banner.vue";
 import Navbar from "@/components/Navbar.vue";
 import SliderContent from "@/components/SliderContent.vue";
 import store from "@/store"; // Vuex store 가져오기
+import Header from "../components/Header.vue";
+import KaKaoLogin from "../components/KaKaoLogin.vue";
 
 export default {
   name: "Home",
@@ -29,6 +34,8 @@ export default {
     Banner,
     Navbar,
     SliderContent,
+    Header,
+    KaKaoLogin,
   },
   data() {
     return {
