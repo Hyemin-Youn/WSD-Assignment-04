@@ -1,5 +1,8 @@
 <template>
   <div>
+    <!-- 헤더 추가 -->
+    <Header @kakao-login="handleKakaoLogin" />
+
     <div class="bg-image" />
     <div class="wrapper">
       <!-- 로그인 카드 -->
@@ -36,58 +39,17 @@
           </p>
         </div>
       </div>
-
-      <!-- 회원가입 카드 -->
-      <div
-        class="card"
-        :class="{ active: activeCard === 'signup', backward: activeCard === 'login' }"
-      >
-        <div class="content">
-          <h2>Sign Up</h2>
-          <form @submit.prevent="handleRegister">
-            <label for="newEmail">Email</label>
-            <input id="newEmail" v-model="newEmail" type="email" required />
-
-            <label for="newPassword">Password</label>
-            <input
-              id="newPassword"
-              v-model="newPassword"
-              type="password"
-              required
-            />
-
-            <label for="confirmPassword">Confirm Password</label>
-            <input
-              id="confirmPassword"
-              v-model="confirmPassword"
-              type="password"
-              required
-            />
-
-            <p v-if="signupError" class="error">{{ signupError }}</p>
-
-            <div class="terms">
-              <input id="terms" v-model="termsAccepted" type="checkbox" />
-              <label for="terms">
-                I have read the <b>Terms and Conditions</b>
-              </label>
-            </div>
-
-            <button type="submit" :disabled="!termsAccepted">
-              Register
-            </button>
-          </form>
-          <p class="switch" @click="switchToLogin">
-            Already have an account? <b>Sign in</b>
-          </p>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Header from "@/components/Header.vue"; // 헤더 컴포넌트 import
+
 export default {
+  components: {
+    Header, // 컴포넌트 등록
+  },
   data() {
     return {
       activeCard: "login",
@@ -104,7 +66,7 @@ export default {
   },
   mounted() {
     const query = new URLSearchParams(window.location.search);
-    const code = query.get('code');
+    const code = query.get("code");
 
     if (code) {
       this.handleKakaoCallback(code); // 카카오 로그인 토큰 처리 함수 호출
@@ -113,27 +75,9 @@ export default {
   methods: {
     switchToSignup() {
       this.activeCard = "signup";
-      this.triggerCardAnimation();
     },
     switchToLogin() {
       this.activeCard = "login";
-      this.triggerCardAnimation();
-    },
-    triggerCardAnimation() {
-      const cards = document.querySelectorAll(".card");
-      cards.forEach((card) => {
-        if (card.classList.contains("active")) {
-          card.classList.remove("active");
-          card.classList.add("backward");
-        } else {
-          card.classList.remove("backward");
-          card.classList.add("enter");
-          setTimeout(() => {
-            card.classList.remove("enter");
-            card.classList.add("active");
-          }, 1000);
-        }
-      });
     },
     handleLogin() {
       if (this.password.length < 6) {
@@ -160,12 +104,12 @@ export default {
     },
     handleKakaoLogin() {
       const clientId = process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY;
-      const redirectUri = "https://hyemin-youn.github.io/WSD-Assignment-04/";
+      const redirectUri = process.env.VUE_APP_KAKAO_REDIRECT_URI;
       const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
       window.location.href = kakaoAuthUrl;
     },
-    handleKakaoCallback(code) {
-      fetch("https://kauth.kakao.com/oauth/token", {
+    async handleKakaoCallback(code) {
+      const response = await fetch("https://kauth.kakao.com/oauth/token", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -173,20 +117,38 @@ export default {
         body: new URLSearchParams({
           grant_type: "authorization_code",
           client_id: process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY,
-          redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/",
+          redirect_uri: process.env.VUE_APP_KAKAO_REDIRECT_URI,
           code: code,
         }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.access_token) {
-            localStorage.setItem("kakaoToken", data.access_token);
-            this.$router.push("/home"); // 로그인 성공 시 홈으로 리다이렉트
-          } else {
-            console.error("Failed to get Access Token:", data);
-          }
-        })
-        .catch((error) => console.error("Error during token exchange:", error));
+      });
+      const data = await response.json();
+
+      if (data.access_token) {
+        localStorage.setItem("kakaoToken", data.access_token);
+        this.getUserInfo(data.access_token);
+      } else {
+        console.error("Failed to get Access Token:", data);
+      }
+    },
+    async getUserInfo(accessToken) {
+      window.Kakao.API.request({
+        url: "/v2/user/me",
+        success: (res) => {
+          console.log("사용자 정보:", res);
+
+          // 사용자 정보를 Vuex에 저장
+          const userInfo = {
+            nickname: res.properties.nickname,
+            profile_image: res.properties.profile_image,
+          };
+          this.$store.commit("setUser", userInfo);
+
+          this.$router.push("/home");
+        },
+        fail: (err) => {
+          console.error("사용자 정보 요청 실패:", err);
+        },
+      });
     },
   },
 };
@@ -194,36 +156,8 @@ export default {
 
 <style scoped>
 /* 기존 스타일 유지 */
-/* 배경 이미지 */
-.bg-image {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('https://images.unsplash.com/photo-1512070679279-8988d32161be?q=80&w=1938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-  background-size: cover;
-  background-position: center;
-  z-index: -1;
-}
-
-/* 컨테이너 */
-.wrapper {
-  width: 90%;
-  max-width: 600px; /* 데스크톱에서는 최대 600px */
-  height: auto; /* 높이를 콘텐츠에 따라 조정 */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  perspective: 1000px;
-}
-
-/* 나머지 스타일 유지 */
 </style>
+
 
 
 <style scoped>

@@ -7,7 +7,7 @@
         <button @click="logout">로그아웃</button>
       </div>
       <div v-else>
-        <button @click="kakaoLogin">로그인</button>
+        <button @click="$emit('kakao-login')">로그인</button>
       </div>
     </header>
   </template>
@@ -20,9 +20,6 @@
       },
     },
     methods: {
-      kakaoLogin() {
-        this.$emit("kakao-login"); // 부모 컴포넌트에서 이벤트 처리
-      },
       logout() {
         this.$store.commit("logout");
         alert("로그아웃되었습니다.");
