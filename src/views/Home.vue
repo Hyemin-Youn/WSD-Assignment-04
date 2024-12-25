@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navbar />
+    <Header />
     <div class="home">
       <div v-if="isLoading" class="loading-overlay">
         <p>로딩중...</p>
@@ -19,7 +19,8 @@
 <script>
 import axios from "axios";
 import Banner from "@/components/Banner.vue";
-import Navbar from "@/components/Navbar.vue";
+import Header from "@/components/Header.vue";
+
 import SliderContent from "@/components/SliderContent.vue";
 import store from "@/store"; // Vuex store 가져오기
 
@@ -28,7 +29,7 @@ export default {
   name: "Home",
   components: {
     Banner,
-    Navbar,
+    Header,
     SliderContent,
   },
   data() {
