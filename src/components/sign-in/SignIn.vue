@@ -36,6 +36,52 @@
           </p>
         </div>
       </div>
+
+      <!-- 회원가입 카드 -->
+      <div
+        class="card"
+        :class="{ active: activeCard === 'signup', backward: activeCard === 'login' }"
+      >
+        <div class="content">
+          <h2>Sign Up</h2>
+          <form @submit.prevent="handleRegister">
+            <label for="newEmail">Email</label>
+            <input id="newEmail" v-model="newEmail" type="email" required />
+
+            <label for="newPassword">Password</label>
+            <input
+              id="newPassword"
+              v-model="newPassword"
+              type="password"
+              required
+            />
+
+            <label for="confirmPassword">Confirm Password</label>
+            <input
+              id="confirmPassword"
+              v-model="confirmPassword"
+              type="password"
+              required
+            />
+
+            <p v-if="signupError" class="error">{{ signupError }}</p>
+
+            <div class="terms">
+              <input id="terms" v-model="termsAccepted" type="checkbox" />
+              <label for="terms">
+                I have read the <b>Terms and Conditions</b>
+              </label>
+            </div>
+
+            <button type="submit" :disabled="!termsAccepted">
+              Register
+            </button>
+          </form>
+          <p class="switch" @click="switchToLogin">
+            Already have an account? <b>Sign in</b>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -49,63 +95,44 @@ export default {
       password: "",
       rememberMe: false,
       loginError: "",
+      newEmail: "",
+      newPassword: "",
+      confirmPassword: "",
+      termsAccepted: false,
+      signupError: "",
     };
   },
   mounted() {
-    // 인증 코드가 있으면 사용자 정보 요청
     const query = new URLSearchParams(window.location.search);
-    const code = query.get("code");
+    const code = query.get('code');
 
     if (code) {
-      this.handleKakaoCallback(code); // 카카오 로그인 콜백 처리
+      this.handleKakaoCallback(code); // 카카오 로그인 토큰 처리 함수 호출
     }
   },
   methods: {
-    handleKakaoLogin() {
-      // 카카오 로그인 요청
-      window.Kakao.Auth.authorize({
-        redirectUri: process.env.VUE_APP_KAKAO_REDIRECT_URI,
-      });
+    switchToSignup() {
+      this.activeCard = "signup";
+      this.triggerCardAnimation();
     },
-    async handleKakaoCallback(code) {
-      // Access Token 요청
-      const response = await fetch("https://kauth.kakao.com/oauth/token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          grant_type: "authorization_code",
-          client_id: process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY,
-          redirect_uri: process.env.VUE_APP_KAKAO_REDIRECT_URI,
-          code: code,
-        }),
-      });
-      const data = await response.json();
-
-      if (data.access_token) {
-        // Access Token 저장
-        localStorage.setItem("kakaoToken", data.access_token);
-
-        // 사용자 정보 요청
-        this.getUserInfo(data.access_token);
-      } else {
-        console.error("Failed to get Access Token:", data);
-      }
+    switchToLogin() {
+      this.activeCard = "login";
+      this.triggerCardAnimation();
     },
-    async getUserInfo(accessToken) {
-      // 사용자 정보 요청
-      window.Kakao.API.request({
-        url: "/v2/user/me",
-        success: (res) => {
-          console.log("사용자 정보:", res);
-          // 사용자 정보 활용 (예: Vuex 상태 업데이트)
-          this.$store.commit("setUser", res);
-          this.$router.push("/home"); // 로그인 성공 시 홈으로 리다이렉트
-        },
-        fail: (err) => {
-          console.error("사용자 정보 요청 실패:", err);
-        },
+    triggerCardAnimation() {
+      const cards = document.querySelectorAll(".card");
+      cards.forEach((card) => {
+        if (card.classList.contains("active")) {
+          card.classList.remove("active");
+          card.classList.add("backward");
+        } else {
+          card.classList.remove("backward");
+          card.classList.add("enter");
+          setTimeout(() => {
+            card.classList.remove("enter");
+            card.classList.add("active");
+          }, 1000);
+        }
       });
     },
     handleLogin() {
@@ -119,9 +146,84 @@ export default {
         this.$router.push("/home");
       }
     },
+    handleRegister() {
+      if (this.newPassword.length < 6) {
+        this.signupError = "Password must be at least 6 characters long.";
+        return;
+      }
+      if (this.newPassword !== this.confirmPassword) {
+        this.signupError = "Passwords do not match.";
+        return;
+      }
+      alert("Registration successful!");
+      this.switchToLogin();
+    },
+    handleKakaoLogin() {
+      const clientId = process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY;
+      const redirectUri = "https://hyemin-youn.github.io/WSD-Assignment-04/";
+      const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
+      window.location.href = kakaoAuthUrl;
+    },
+    handleKakaoCallback(code) {
+      fetch("https://kauth.kakao.com/oauth/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          client_id: process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY,
+          redirect_uri: "https://hyemin-youn.github.io/WSD-Assignment-04/",
+          code: code,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.access_token) {
+            localStorage.setItem("kakaoToken", data.access_token);
+            this.$router.push("/home"); // 로그인 성공 시 홈으로 리다이렉트
+          } else {
+            console.error("Failed to get Access Token:", data);
+          }
+        })
+        .catch((error) => console.error("Error during token exchange:", error));
+    },
   },
 };
 </script>
+
+<style scoped>
+/* 기존 스타일 유지 */
+/* 배경 이미지 */
+.bg-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('https://images.unsplash.com/photo-1512070679279-8988d32161be?q=80&w=1938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
+/* 컨테이너 */
+.wrapper {
+  width: 90%;
+  max-width: 600px; /* 데스크톱에서는 최대 600px */
+  height: auto; /* 높이를 콘텐츠에 따라 조정 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+}
+
+/* 나머지 스타일 유지 */
+</style>
 
 
 <style scoped>
