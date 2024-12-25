@@ -1,14 +1,18 @@
 <template>
   <div id="app">
     <router-view />
-
+    <KakaoLogin />
   </div>
 </template>
 
 <script>
 import '@fortawesome/fontawesome-free/css/all.css';
+import KakaoLogin from "../components/KakaoLogin.vue";
 
 export default {
+  components: {
+    KakaoLogin,
+  },
   methods: {
     handleKakaoLogin() {
       window.Kakao.Auth.authorize({
