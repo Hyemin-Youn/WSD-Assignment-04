@@ -15,5 +15,7 @@ module.exports = {
     "vue/multi-word-component-names": "off",
     "vue/attribute-hyphenation": "off",
     "vue/html-indent": "off",
+    "vue/no-unused-components": "off",
+    "no-unused-vars": "off",
   },
 };
