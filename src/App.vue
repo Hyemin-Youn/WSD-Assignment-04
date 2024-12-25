@@ -1,16 +1,20 @@
 <template>
   <div id="app">
     <router-view />
+    <Header v-if="$route.meta.showHeader" />
+
   </div>
 </template>
 
 <script>
 import '@fortawesome/fontawesome-free/css/all.css';
 import Navbar from './components/Navbar.vue'; // Navbar 컴포넌트 추가
+import Header from "@/components/Header.vue";
 
 export default {
   components: {
     Navbar,
+    Header,
   },
   methods: {
     handleKakaoLogin() {

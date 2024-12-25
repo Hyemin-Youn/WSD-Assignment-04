@@ -25,10 +25,13 @@ const routes = [
     name: 'Home', 
     component: Home,
     meta: { requiresAuth: true },
+    meta: { showHeader: true }, // Header 표시
   },
   { 
     path: '/', 
     redirect: '/signin',
+    component: SignIn,
+    meta: { showHeader: false }, // Header 숨김
   },  
   {
     path: "/movies/:id",
