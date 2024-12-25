@@ -1,7 +1,8 @@
 <template>
   <div>
+    <Header @kakao-login="handleKakaoLogin" />
     <Navbar />
-
+    
     <div class="home">
       <div
 v-if="isLoading"
