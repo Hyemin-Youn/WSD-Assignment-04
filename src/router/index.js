@@ -9,7 +9,7 @@ import Search from "@/views/Search.vue";
 import PopularInfinite from "@/views/PopularInfinite.vue";
 import PopularTable from "@/views/PopularTable.vue";
 import Popular from "@/components/Popular.vue";
-
+import KaKaoCallback from "@/views/KaKaoCallback.vue"; // 카카오 콜백 처리
 
 
 
@@ -63,6 +63,11 @@ const routes = [
     path: "/search",
     name: "Search",
     component: Search,
+  },
+  {
+    path: "/kakao/callback", // 카카오 리다이렉트 경로
+    name: "KaKaoCallback",
+    component: KaKaoCallback,
   },
 ];
 

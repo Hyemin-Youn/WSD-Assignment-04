@@ -76,6 +76,14 @@ const store = createStore({
       console.log("검색 결과 저장 중:", results);
       commit("SET_SEARCH_RESULTS", results);
     },
+    authenticateUser({ commit }, user) {
+      // 로그인 후 사용자 인증 상태 설정
+      commit("setUser", user);
+    },
+    logoutUser({ commit }) {
+      // 로그아웃 처리
+      commit("logout");
+    },
   },
   getters: {
     wishlist: (state) => state.wishlist, // 찜 목록 가져오기
@@ -84,6 +92,8 @@ const store = createStore({
     },
     recentSearches: (state) => state.recentSearches, // 최근 검색어 가져오기
     searchResults: (state) => state.searchResults, // 저장된 검색 결과 가져오기
+    isAuthenticated: (state) => state.isAuthenticated, // 로그인 여부 확인
+    user: (state) => state.user, // 사용자 정보 가져오기
   },
 });
 
