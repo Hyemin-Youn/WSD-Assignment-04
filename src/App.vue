@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <Navbar />
     <router-view />
 
   </div>
@@ -8,12 +7,8 @@
 
 <script>
 import '@fortawesome/fontawesome-free/css/all.css';
-import Navbar from '@/components/Navbar.vue'; // Navbar 컴포넌트 추가
 
 export default {
-  components: {
-    Navbar,
-  },
   methods: {
     handleKakaoLogin() {
       window.Kakao.Auth.authorize({
