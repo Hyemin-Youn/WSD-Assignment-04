@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <Header @kakao-login="handleKakaoLogin" />
     <router-view />
   </div>
 </template>
@@ -13,7 +12,6 @@ import Header from "./components/Header.vue";
 export default {
   components: {
     Navbar,
-    Header,
   },
   methods: {
     handleKakaoLogin() {
