@@ -97,6 +97,7 @@ const store = createStore({
         const userInfo = {
           nickname: data.properties.nickname,
           profile_image: data.properties.profile_image,
+          email: data.kakao_account.email, // 이메일 추가
         };
         commit("setUser", userInfo);
       } catch (error) {
