@@ -97,8 +97,10 @@ const store = createStore({
         const userInfo = {
           nickname: data.properties.nickname,
           profile_image: data.properties.profile_image,
-          email: data.kakao_account.email, // 이메일 추가
+          email: data.kakao_account.email || "이메일 없음", // 이메일 정보 추가
         };
+
+        console.log("카카오 사용자 데이터:", data);
         commit("setUser", userInfo);
       } catch (error) {
         console.error("카카오 사용자 정보 가져오기 실패:", error);
