@@ -78,8 +78,7 @@ WSD-Assignment-04/
 │   ├── store/       # Vuex 상태 관리
 │   ├── App.vue      # 메인 Vue 파일
 │   └── main.js      # 프로젝트 진입 파일
-├── .env-dev         # 개발 환경 변수
-├── .env-prod        # 배포 환경 변수
+├── .env             # 환경 변수(배포:github secrets)
 ├── .gitignore       # Git에 포함되지 않을 파일 목록
 ├── package.json     # 프로젝트 의존성과 스크립트
 └── README.md        # 프로젝트 문서
