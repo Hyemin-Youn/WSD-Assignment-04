@@ -66,12 +66,6 @@ const routes = [
     component: Search,
     meta: { requiresAuth: true }, // 인증 필요
   },
-  {
-    path: "/kakao/callback", // 카카오 리다이렉트 경로
-    name: "KaKaoCallback",
-    component: KaKaoCallback,
-    meta: { hideNavbar: true, showHeader: false }, // Header 숨김
-  },
 ];
 
 const router = createRouter({
