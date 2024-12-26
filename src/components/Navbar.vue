@@ -39,7 +39,7 @@ class="logo"
         alt="Profile"
         class="profile-icon"
         @click="logout"
-      >
+      />
     </div>
   </nav>
 </template>
