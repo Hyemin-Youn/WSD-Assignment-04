@@ -2,9 +2,7 @@
 # Hyemin-Youn
 
 ## Overview
-이 프로젝트는 Node.js  기반 개발 환경에서 Vue.js로 개발된 프론트엔드 넷플릭스 클론 코딩 프로젝트입니다. 기술스택은 Vue입니다.
-This project is built using Vue.js and includes several popular libraries and tools for development, styling, and state management.
-
+이 프로젝트는 Vue.js를 기반으로 한 넷플릭스 클론 프로젝트로, 카카오 로그인 기능을 구현하여 소셜 로그인과 사용자 데이터를 처리합니다. 또한, TMDB API를 사용하여 외부 데이터를 관리하며, 개발 및 배포 환경을 `.env` 파일로 분리하여 설정을 관리합니다.
 ---
 
 ## Technology Stack
@@ -35,6 +33,7 @@ npm install (following packages)
 11. **@fortawesome/fontawesome-svg-core**: Core utilities for FontAwesome.
 12. **@vueuse/core**: Utility functions for Vue Composition API.
 13. **dotenv**: For managing environment variables.
+14. **gh-pages**: For deployment to GitHub Pages.
 
 ---
 
@@ -69,21 +68,22 @@ To set up the project locally, follow these steps:
 Here is a brief overview of the folder structure:
 
 ```
-Hyemin-Youn.github.io/
-├── public/          # Static assets (favicon, manifest, etc.)
+WSD-Assignment-04/
+├── public/          # 정적 파일 (favicon 등)
 ├── src/
-│   ├── assets/      # Images, fonts, stylesheets, etc.
-│   ├── components/  # Reusable Vue components (e.g., Navbar, Footer)
-│   ├── views/       # Pages (e.g., Home, Search, Favorites)
-│   ├── router/      # Vue Router configuration
-│   ├── store/       # Vuex state management
-│   ├── api/         # API functions and Axios configuration
-│   ├── App.vue      # Main Vue app file
-│   └── main.js      # Entry point of the application
-├── .env             # Environment variables (API keys, etc.)
-├── .gitignore       # Git ignore file
-├── README.md        # Project documentation
-└── package.json     # Project dependencies and scripts
+│   ├── assets/      # 이미지, 스타일 등
+│   ├── components/  # 재사용 가능한 Vue 컴포넌트
+│   ├── views/       # 주요 페이지
+│   ├── router/      # Vue Router 설정
+│   ├── store/       # Vuex 상태 관리
+│   ├── App.vue      # 메인 Vue 파일
+│   └── main.js      # 프로젝트 진입 파일
+├── .env-dev         # 개발 환경 변수
+├── .env-prod        # 배포 환경 변수
+├── .gitignore       # Git에 포함되지 않을 파일 목록
+├── package.json     # 프로젝트 의존성과 스크립트
+└── README.md        # 프로젝트 문서
+
 ```
 
 ---
@@ -114,8 +114,9 @@ The project uses **dotenv** to manage environment variables. To set up your envi
 1. Create a `.env` file in the root directory.
 2. Add your variables in the following format:
    ```
-   VUE_APP_API_KEY=<your_api_key>
+   VUE_APP_TMDB_API_KEY=<your_tmdb_api_key>
    VUE_APP_BASE_URL=<api_base_url>
+   KAKAO_API_KEY=<your_kakao_javascript_api_key>
    ```
 ---
 
