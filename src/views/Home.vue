@@ -1,20 +1,89 @@
 <template>
   <div>
-    <Navbar />
-    <div class="home">
-      <div class="logout-section" v-if="user">
-        <span>안녕하세요, {{ user.nickname }}님!</span>
-        <img :src="user.profile_image" alt="프로필 이미지" class="profile-image" />
-        <button @click="logout" class="logout-button">로그아웃</button>
+    <div class="bg-image" />
+    <div class="wrapper">
+      <!-- 로그인 카드 -->
+      <div
+        class="card"
+        :class="{ active: activeCard === 'login', backward: activeCard === 'signup' }"
+      >
+        <div class="content">
+          <h2 v-if="!user">Login</h2>
+          <h2 v-else>Welcome, {{ user.nickname }}!</h2>
+          <form v-if="!user" @submit.prevent="handleLogin">
+            <label for="email">Email</label>
+            <input id="email" v-model="email" type="email" required />
+
+            <label for="password">Password</label>
+            <input id="password" v-model="password" type="password" required />
+
+            <p v-if="loginError" class="error">{{ loginError }}</p>
+
+            <div class="remember-me">
+              <input id="rememberMe" v-model="rememberMe" type="checkbox" />
+              <label for="rememberMe">Remember Me</label>
+            </div>
+
+            <button type="submit">Sign In</button>
+          </form>
+
+          <!-- 카카오 로그인 버튼 -->
+          <button v-if="!user" class="kakao-login" @click="handleKakaoLogin">
+            카카오 로그인
+          </button>
+
+          <p v-if="!user" class="switch" @click="switchToSignup">
+            Don't have an account? <b>Sign up</b>
+          </p>
+
+          <!-- 로그아웃 버튼 -->
+          <button v-else @click="logout" class="logout-button">Logout</button>
+        </div>
       </div>
-      <div v-if="isLoading" class="loading-overlay">
-        <p>로딩중...</p>
-      </div>
-      <div v-else>
-        <Banner :heroMovie="heroMovie" />
-        <div v-for="category in movieCategories" :key="category.name" class="movie-category">
-          <h3>{{ category.title }}</h3>
-          <SliderContent :movies="category.movies" />
+
+      <!-- 회원가입 카드 -->
+      <div
+        class="card"
+        :class="{ active: activeCard === 'signup', backward: activeCard === 'login' }"
+      >
+        <div class="content">
+          <h2>Sign Up</h2>
+          <form @submit.prevent="handleRegister">
+            <label for="newEmail">Email</label>
+            <input id="newEmail" v-model="newEmail" type="email" required />
+
+            <label for="newPassword">Password</label>
+            <input
+              id="newPassword"
+              v-model="newPassword"
+              type="password"
+              required
+            />
+
+            <label for="confirmPassword">Confirm Password</label>
+            <input
+              id="confirmPassword"
+              v-model="confirmPassword"
+              type="password"
+              required
+            />
+
+            <p v-if="signupError" class="error">{{ signupError }}</p>
+
+            <div class="terms">
+              <input id="terms" v-model="termsAccepted" type="checkbox" />
+              <label for="terms">
+                I have read the <b>Terms and Conditions</b>
+              </label>
+            </div>
+
+            <button type="submit" :disabled="!termsAccepted">
+              Register
+            </button>
+          </form>
+          <p class="switch" @click="switchToLogin">
+            Already have an account? <b>Sign in</b>
+          </p>
         </div>
       </div>
     </div>
@@ -22,117 +91,122 @@
 </template>
 
 <script>
-import axios from "axios";
-import Banner from "@/components/Banner.vue";
-import Navbar from "@/components/Navbar.vue";
-import SliderContent from "@/components/SliderContent.vue";
-import store from "@/store"; // Vuex store 가져오기
-
 export default {
-  name: "Home",
-  components: {
-    Banner,
-    Navbar,
-    SliderContent,
-  },
   data() {
     return {
-      isLoading: true,
-      heroMovie: {},
-      movieCategories: [
-        { name: "popular", title: "인기 영화", movies: [] },
-        { name: "now_playing", title: "최신 영화", movies: [] },
-        { name: "top_rated", title: "높은 평점 영화", movies: [] },
-        { name: "upcoming", title: "개봉 예정 영화", movies: [] },
-      ],
+      activeCard: "login",
+      email: "",
+      password: "",
+      rememberMe: false,
+      loginError: "",
+      newEmail: "",
+      newPassword: "",
+      confirmPassword: "",
+      termsAccepted: false,
+      signupError: "",
     };
   },
   computed: {
     user() {
-      return store.state.user; // Vuex에서 사용자 정보 가져오기
+      return this.$store.state.user; // Vuex에서 사용자 정보 가져오기
     },
   },
-  created() {
-    // 인증 여부 체크
-    if (!store.getters.isAuthenticated) {
-      this.$router.push("/signin");
-    } else {
-      this.loadData();
+  mounted() {
+    const query = new URLSearchParams(window.location.search);
+    const code = query.get("code");
+
+    if (code) {
+      this.handleKakaoCallback(code);
     }
   },
   methods: {
-    async loadData() {
-      try {
-        await Promise.all([this.fetchHeroMovie(), this.fetchMovies()]);
-      } catch (error) {
-        console.error("Error loading data:", error);
-        alert("영화 데이터를 불러오는데 실패했습니다. 나중에 다시 시도해 주세요.");
-      } finally {
-        this.isLoading = false;
-      }
+    switchToSignup() {
+      this.activeCard = "signup";
     },
-    async fetchHeroMovie() {
-      const TMDB_API_KEY = process.env.VUE_APP_TMDB_API_KEY;
-      try {
-        const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=ko-KR`
-        );
-        this.heroMovie = response.data.results[0];
-      } catch (error) {
-        console.error("Hero Movie 로드 실패:", error);
-        alert("메인 영화를 불러오지 못했습니다.");
-      }
+    switchToLogin() {
+      this.activeCard = "login";
     },
-    async fetchMovies() {
-      const TMDB_API_KEY = process.env.VUE_APP_TMDB_API_KEY;
-      try {
-        const requests = this.movieCategories.map(async (category) => {
-          const response = await axios.get(
-            `https://api.themoviedb.org/3/movie/${category.name}?api_key=${TMDB_API_KEY}&language=ko-KR`
-          );
-          category.movies = response.data.results;
-        });
-        await Promise.all(requests);
-      } catch (error) {
-        console.error("Movie Categories 로드 실패.", error);
-        alert("카테고리 데이터를 불러오는데 실패했습니다.");
+    handleLogin() {
+      if (this.password.length < 6) {
+        this.loginError = "Password must be at least 6 characters long.";
+        return;
       }
+      alert("Login successful!");
+      this.$store.commit("setUser", { email: this.email });
+      this.$router.push("/home");
+    },
+    handleRegister() {
+      if (this.newPassword.length < 6) {
+        this.signupError = "Password must be at least 6 characters long.";
+        return;
+      }
+      if (this.newPassword !== this.confirmPassword) {
+        this.signupError = "Passwords do not match.";
+        return;
+      }
+      alert("Registration successful!");
+      this.switchToLogin();
+    },
+    handleKakaoLogin() {
+      const clientId = process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY;
+      const redirectUri = process.env.VUE_APP_KAKAO_REDIRECT_URI;
+      const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
+      window.location.href = kakaoAuthUrl;
+    },
+    handleKakaoCallback(code) {
+      fetch("https://kauth.kakao.com/oauth/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          client_id: process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY,
+          redirect_uri: process.env.VUE_APP_KAKAO_REDIRECT_URI,
+          code: code,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.access_token) {
+            localStorage.setItem("kakaoToken", data.access_token);
+            this.getUserInfo(data.access_token);
+          }
+        })
+        .catch((error) => console.error(error));
+    },
+    async getUserInfo(token) {
+      await fetch("https://kapi.kakao.com/v2/user/me", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const userInfo = {
+            nickname: data.properties.nickname,
+            profile_image: data.properties.profile_image,
+          };
+          this.$store.commit("setUser", userInfo);
+          this.$router.push("/home");
+        })
+        .catch((error) => console.error(error));
     },
     logout() {
-      store.commit("logout"); // Vuex 상태 초기화
+      this.$store.commit("logout");
+      localStorage.removeItem("kakaoToken");
       alert("로그아웃되었습니다.");
-      this.$router.push("/signin"); // 로그인 페이지로 이동
+      this.$router.push("/signin");
     },
   },
 };
 </script>
 
 <style scoped>
-.home {
-  padding: 20px;
-  background-color: #141414;
-  color: #ffffff;
-}
-
-.logout-section {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 10px;
-  background-color: #333;
-  color: white;
-}
-
-.profile-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-left: 10px;
-}
-
 .logout-button {
-  margin-left: 10px;
-  padding: 5px 10px;
+  margin-top: 10px;
+  padding: 10px;
   background-color: #e50914;
   color: white;
   border: none;
@@ -142,28 +216,5 @@ export default {
 
 .logout-button:hover {
   background-color: #bf0812;
-}
-
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  font-size: 1.5em;
-}
-
-.movie-category {
-  margin-bottom: 20px;
-}
-
-.movie-category h3 {
-  font-size: 1.5em;
-  margin-bottom: 10px;
 }
 </style>
