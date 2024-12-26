@@ -107,6 +107,7 @@ export default {
 };
 </script>
 
+
 <style scoped>
 .home {
   padding: 20px;
