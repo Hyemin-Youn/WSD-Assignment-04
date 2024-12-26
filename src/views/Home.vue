@@ -22,16 +22,17 @@
 </template>
 
 <script>
-import Navbar from "@/components/Navbar.vue";
+import axios from "axios";
 import Banner from "@/components/Banner.vue";
+import Navbar from "@/components/Navbar.vue";
 import SliderContent from "@/components/SliderContent.vue";
-import store from "@/store";
+import store from "@/store"; // Vuex store 가져오기
 
 export default {
   name: "Home",
   components: {
-    Navbar,
     Banner,
+    Navbar,
     SliderContent,
   },
   data() {
@@ -48,10 +49,11 @@ export default {
   },
   computed: {
     user() {
-      return store.state.user;
+      return store.state.user; // Vuex에서 사용자 정보 가져오기
     },
   },
   created() {
+    // 인증 여부 체크
     if (!store.getters.isAuthenticated) {
       this.$router.push("/signin");
     } else {
@@ -59,18 +61,51 @@ export default {
     }
   },
   methods: {
-    logout() {
-      store.commit("logout");
-      alert("로그아웃되었습니다.");
-      this.$router.push("/signin");
-    },
     async loadData() {
-      // 데이터 로드 로직
+      try {
+        await Promise.all([this.fetchHeroMovie(), this.fetchMovies()]);
+      } catch (error) {
+        console.error("Error loading data:", error);
+        alert("영화 데이터를 불러오는데 실패했습니다. 나중에 다시 시도해 주세요.");
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    async fetchHeroMovie() {
+      const TMDB_API_KEY = process.env.VUE_APP_TMDB_API_KEY;
+      try {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=ko-KR`
+        );
+        this.heroMovie = response.data.results[0];
+      } catch (error) {
+        console.error("Hero Movie 로드 실패:", error);
+        alert("메인 영화를 불러오지 못했습니다.");
+      }
+    },
+    async fetchMovies() {
+      const TMDB_API_KEY = process.env.VUE_APP_TMDB_API_KEY;
+      try {
+        const requests = this.movieCategories.map(async (category) => {
+          const response = await axios.get(
+            `https://api.themoviedb.org/3/movie/${category.name}?api_key=${TMDB_API_KEY}&language=ko-KR`
+          );
+          category.movies = response.data.results;
+        });
+        await Promise.all(requests);
+      } catch (error) {
+        console.error("Movie Categories 로드 실패.", error);
+        alert("카테고리 데이터를 불러오는데 실패했습니다.");
+      }
+    },
+    logout() {
+      store.commit("logout"); // Vuex 상태 초기화
+      alert("로그아웃되었습니다.");
+      this.$router.push("/signin"); // 로그인 페이지로 이동
     },
   },
 };
 </script>
-
 
 <style scoped>
 .home {
