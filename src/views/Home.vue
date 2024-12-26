@@ -3,7 +3,7 @@
     <Navbar />
     <div class="home">
       <div class="logout-section" v-if="user">
-        <span>안녕하세요, {{ user.nickname }}님!</span>
+        <span>안녕하세요, {{ user.nickname }}님! ({{ user.email }})</span>
         <img :src="user.profile_image" alt="프로필 이미지" class="profile-image" />
         <button @click="logout" class="logout-button">로그아웃</button>
       </div>
