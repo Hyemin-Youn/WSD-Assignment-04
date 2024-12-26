@@ -2,22 +2,44 @@
   <nav :class="['navbar', { 'navbar-scrolled': isScrolled }]">
     <div class="navbar-left">
       <router-link to="/home">
-        <img src="@/assets/logo.png" alt="Logo" class="logo" />
+        <img
+src="@/assets/logo.png"
+alt="Logo"
+class="logo"
+>
       </router-link>
+
       <ul class="nav-links">
-        <li><router-link to="/home">홈</router-link></li>
-        <li><router-link to="/popular">대세 콘텐츠</router-link></li>
-        <li><router-link to="/search">찾아보기</router-link></li>
-        <li><router-link to="/wishlist">내가 찜한 리스트</router-link></li>
+        <li>
+<router-link to="/home">
+홈
+</router-link>
+</li>
+        <li>
+<router-link to="/popular">
+대세 콘텐츠
+</router-link>
+</li>
+        <li>
+<router-link to="/search">
+찾아보기
+</router-link>
+</li>
+        <li>
+<router-link to="/wishlist">
+내가 찜한 리스트
+</router-link>
+</li>
       </ul>
     </div>
+
     <div class="navbar-right">
       <img
         src="@/assets/profile-icon.png"
         alt="Profile"
         class="profile-icon"
         @click="logout"
-      />
+      >
     </div>
   </nav>
 </template>
@@ -27,7 +49,7 @@ export default {
   name: "Navbar",
   data() {
     return {
-      isScrolled: false,
+      isScrolled: false, // 스크롤 상태 관리
     };
   },
   mounted() {
@@ -38,18 +60,19 @@ export default {
   },
   methods: {
     handleScroll() {
+      // 스크롤 위치가 50px 이상이면 'isScrolled' 상태를 true로 설정
       this.isScrolled = window.scrollY > 50;
     },
     logout() {
-      this.$store.commit("logout");
       localStorage.removeItem("user");
+      if (this.$store) {
+        this.$store.dispatch("logout");
+      }
       this.$router.push("/signin");
-      alert("로그아웃되었습니다.");
     },
   },
 };
 </script>
-
 
 <style scoped>
 /* 기본 설정 */
